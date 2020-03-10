@@ -4,7 +4,7 @@ CNN using only numpy library
 
 CNN trains on images from MNIST database stored in the kaggle competition https://www.kaggle.com/c/digit-recognizer/overview
 
-Please put your images under model/train.csv & model/test.csv
+Please put your images under model/train.csv & model/test.csv (data can be downloaded from here https://www.kaggle.com/c/digit-recognizer/data )
 
 To train your model :
 
