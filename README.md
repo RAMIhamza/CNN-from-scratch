@@ -23,3 +23,8 @@ Submission score on kaggle:
 - n_steps = 15000    score = 0.89871
 
 - n_steps = 20000    score = 0.89285
+
+
+
+### Architecture:
+conv(8,3,3), maxpooling(2), fully connected(10)
