@@ -21,6 +21,7 @@ class conv():
                     new_last_gradients[f]+=last_gradients[i,j,f]*self.retrieve[(i,j)]
         self.filters -= lr * new_last_gradients
         return new_last_gradients
+    
 
 
 class maxpooling():
@@ -98,41 +99,3 @@ class fully_connected():
             self.biases -= lr * d_L_biases
                 
         return d_L_inputs.reshape(self.last_shape)
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
