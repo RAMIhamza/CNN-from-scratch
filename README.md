@@ -13,3 +13,5 @@ python main.py --n_steps 15000
 ```
 
 You can modify n_steps in the arguments (Also see main.py for additional arguments)
+
+After finishing the training plots will be saved and also all the layers' weights in ./model
