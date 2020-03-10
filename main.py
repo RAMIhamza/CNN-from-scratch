@@ -35,13 +35,7 @@ def predict(image,conv_,pool,fully_c):
     return np.argmax(out) 
   
 def train_(im, label,conv_,pool,fully_c):
-  '''
-  Completes a full training step on the given image and label.
-  Returns the cross-entropy loss and accuracy.
-  - image is a 2d numpy array
-  - label is a digit
-  - lr is the learning rate
-  '''
+
   # Forward
   out, loss, acc = forward(im, label,conv_,pool,fully_c)
   # Backprop
@@ -75,6 +69,7 @@ if __name__ == '__main__':
     # Normalize the data
     print("normalize data")
     X_train = X_train / 255.0
+    print(len(X_train))
     X_dev = X_dev / 255.0
 
     test = test / 255.0 
@@ -138,7 +133,7 @@ if __name__ == '__main__':
       # plt.plot(np.arange(0,100),np.ones(100)*20,label='test')
       num_tests = len(X_dev)
       print('Test Loss:', loss / num_tests)
-      print('Test Accuracy: {} %'.format( num_correct / num_tests))
+      print('Test Accuracy: {} %'.format( num_correct / num_tests * 100))
 
 
       
