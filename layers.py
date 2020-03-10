@@ -70,7 +70,7 @@ class fully_connected():
         self.output_s=output/np.sum(output,axis=0)
         self.sum=np.sum(output,axis=0)
         return output/np.sum(output,axis=0)
-    def backward(self,input_image,label,lr=0.005):
+    def backward(self,input_image,label,conv_,pool,lr=0.005):
         output = conv_.forward(input_image)
         output = pool.forward(output)
         output=self.forward(output)
