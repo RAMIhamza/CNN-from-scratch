@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from layers import conv,maxpooling,fully_connected
 
 def cross_entropy_loss(output,true_label):
@@ -53,25 +54,23 @@ def train_(im, label,conv_,pool,fully_c):
 print('CNN started!')
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser("Training settings")
-#     parser.add_argument("--sentence", help="A sentence to parse", nargs='+', type=str)   
-#     parser.add_argument("--print_parsing", help="print the parsinf",default=False ,type=bool)
+    parser.add_argument("--n_steps", help="number of training steps",default=10000 ,type=int)
     parser.add_argument("--input_train_data", help="A file to parse",default="./data/train.csv", type=str)
     parser.add_argument("--input_test_data", help="A file to parse",default="./data/test.csv", type=str)
-#     parser.add_argument("--true_file_name", help="A file to parse",default='../Corpus/sequoia_test.tb', type=str)
-#     parser.add_argument("--prediction_file_name", help="A file to parse",default='evaluation_data.parser_output', type=str)
-#     parser.add_argument("--train_pcfg", help="train the parserf",default=False ,type=bool)
-#     parser.add_argument("--split_data", help="split the data into 80/10/10",default=False ,type=bool)
-#     parser.add_argument("--evaluate", help="Evaluation of a parser",default=False ,type=bool)
+    parser.add_argument("--plot", help="True if you want to shaw and save the plots",default=True, type=bool)
+    parser.add_argument("--test_mode", help="test on 2500 images",default=True, type=bool)
+
+    
     args = parser.parse_args()
     # Load the data
     print('start loading the data')
     train = pd.read_csv(args.input_train_data)
     test = pd.read_csv(args.input_test_data)
-    Y_train = train["label"][:10000]
-    Y_dev = train["label"][10000:12500]
+    Y_train = train["label"][:args.n_steps]
+    Y_dev = train["label"][args.n_steps:args.n_steps+2500]
     # Drop 'label' column
-    X_train = train.drop(labels = ["label"],axis = 1) [:10000]
-    X_dev = train.drop(labels = ["label"],axis = 1) [10000:12500]
+    X_train = train.drop(labels = ["label"],axis = 1) [:args.n_steps]
+    X_dev = train.drop(labels = ["label"],axis = 1) [args.n_steps:args.n_steps+2500]
     #normalization
     # Normalize the data
     print("normalize data")
@@ -95,18 +94,52 @@ if __name__ == '__main__':
     losses=[]
     accs=[]
     num_correct = 0
-    for epoch in range(n_epochs):
-      for i, (im, label) in enumerate(zip(X_train, Y_train)):
-        # print(im.shape)
-      #   print(label)
-        if i % 100 == 99:
-          print('[Step %d] Past 100 steps: Average Loss %.3f | Accuracy: %d%%' %(i + 1, loss / 100, num_correct))
-          losses.append(loss / 100)
-          accs.append(num_correct)
-          loss = 0
-          num_correct = 0
-        # print(conv_)
-        l, acc = train_(im, label, conv_, pool,fully_c)
+    print('start training')
+    for i, (im, label) in enumerate(zip(X_train, Y_train)):
+      # print(im.shape)
+    #   print(label)
+      if i % 100 == 99:
+        print('[Step %d] Past 100 steps: Average Loss %.3f | Accuracy: %d%%' %(i + 1, loss / 100, num_correct))
+        losses.append(loss / 100)
+        accs.append(num_correct)
+        loss = 0
+        num_correct = 0
+      # print(conv_)
+      l, acc = train_(im, label, conv_, pool,fully_c)
+      loss += l
+      num_correct += acc
+    #saving the model
+    np.save("./model/cnv_weights.npy",conv_.filters)
+    np.save("./model/fully_c_weights.npy",fully_c.weights)
+    np.save("./model/fully_c_biases.npy",fully_c.biases)
+    if args.plot:
+      # print(accs)
+      plt.figure(figsize=(10,10))
+      plt.plot(np.arange(0,len(accs)*100,100),accs)
+      plt.xlabel('steps')
+      plt.ylabel('accuracy')
+      # plt.show()
+      plt.savefig("training_accuracy.png")
+
+      plt.figure(figsize=(10,10))
+      plt.plot(np.arange(0,len(losses)*100,100),losses)
+      plt.xlabel('steps')
+      plt.ylabel('loss')
+      # plt.show()
+      plt.savefig("training_loss.png")
+    if args.test_mode:
+      print('start testing on 2500 images')
+      loss = 0
+      num_correct = 0
+      for im, label in zip(X_dev, Y_dev):
+        _, l, acc = forward(im, label,conv_,pool,fully_c)
         loss += l
         num_correct += acc
+      # plt.plot(np.arange(0,100),np.ones(100)*20,label='test')
+      num_tests = len(X_dev)
+      print('Test Loss:', loss / num_tests)
+      print('Test Accuracy: {} %'.format( num_correct / num_tests))
+
+
       
+ 
